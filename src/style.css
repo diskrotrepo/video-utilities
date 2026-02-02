@@ -112,12 +112,11 @@ body {
 
 .preview-grid {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
 
-.video-card,
-.frame-card {
+.video-card {
   background: #faf8f4;
   border-radius: 14px;
   padding: 12px;
@@ -132,14 +131,6 @@ body {
 
 .frame-canvas {
   display: none;
-}
-
-.frame-preview {
-  width: 100%;
-  border-radius: 10px;
-  background: #2a2622;
-  min-height: 180px;
-  object-fit: contain;
 }
 
 .scrub-row {
@@ -242,6 +233,7 @@ body {
 .bookmark-actions {
   display: flex;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .bookmark-button {
@@ -251,6 +243,10 @@ body {
   padding: 6px 8px;
   cursor: pointer;
   font-size: 12px;
+}
+
+.bookmark-upload input {
+  display: none;
 }
 
 .primary-button {

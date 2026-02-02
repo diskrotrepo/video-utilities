@@ -38,7 +38,7 @@
 
       <section class="panel">
         <div class="panel-header">
-          <h2>2) Preview + Frame Selection</h2>
+          <h2>2) Preview + Bookmarks</h2>
         </div>
         <div class="panel-body">
           <div class="preview-grid">
@@ -52,17 +52,13 @@
                   <span id="total-time">0.000s</span>
                 </div>
               </div>
-            </div>
-            <div class="frame-card">
               <canvas id="frame-canvas" class="frame-canvas"></canvas>
-              <img id="frame-preview" class="frame-preview" alt="Captured frame preview">
-              <button id="download-frame" class="ghost-button" type="button" disabled>Download Frame</button>
             </div>
           </div>
 
           <div class="control-grid">
             <label>
-              Assumed FPS
+              Assumed FPS (frame ↔ time)
               <input id="fps-input" type="number" min="1" step="1" value="30">
             </label>
             <label>
@@ -77,7 +73,6 @@
 
           <div class="button-row">
             <button id="capture-frame" class="primary-button" type="button" disabled>Capture Bookmark</button>
-            <div class="cut-readout">Selected bookmark: <span id="cut-time">—</span></div>
           </div>
 
           <div class="bookmark-panel">
@@ -92,20 +87,7 @@
 
       <section class="panel">
         <div class="panel-header">
-          <h2>3) Replacement Clip</h2>
-        </div>
-        <div class="panel-body">
-          <p class="hint">Upload the next clip that starts at the selected frame. It will replace everything after the cut.</p>
-          <label class="file-input">
-            <span>Select replacement clip</span>
-            <input id="replace-video-input" type="file" accept="video/*" disabled>
-          </label>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-header">
-          <h2>Timeline</h2>
+          <h2>3) Timeline</h2>
         </div>
         <div class="panel-body">
           <div id="timeline-list" class="timeline-list"></div>
@@ -114,7 +96,7 @@
 
       <section class="panel">
         <div class="panel-header">
-          <h2>Export</h2>
+          <h2>4) Export</h2>
         </div>
         <div class="panel-body">
           <div class="export-row">

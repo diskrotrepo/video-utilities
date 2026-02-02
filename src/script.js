@@ -138,7 +138,6 @@
     segments: [],
     fps: DEFAULT_FPS,
     bookmarks: [],
-    activeBookmarkId: null,
     currentTime: 0,
     activeIndex: 0,
     playing: false,
@@ -310,7 +309,6 @@
 
   function initializeUI() {
     const baseInput = document.getElementById('base-video-input');
-    const replaceInput = document.getElementById('replace-video-input');
     const previewVideo = document.getElementById('preview-video');
     const timelineSlider = document.getElementById('timeline-slider');
     const currentTimeEl = document.getElementById('current-time');
@@ -321,10 +319,7 @@
     const frameInput = document.getElementById('frame-input');
     const timeInput = document.getElementById('time-input');
     const captureBtn = document.getElementById('capture-frame');
-    const cutTimeEl = document.getElementById('cut-time');
     const frameCanvas = document.getElementById('frame-canvas');
-    const framePreview = document.getElementById('frame-preview');
-    const downloadFrame = document.getElementById('download-frame');
     const timelineList = document.getElementById('timeline-list');
     const bookmarkList = document.getElementById('bookmark-list');
     const clearBookmarks = document.getElementById('clear-bookmarks');
@@ -343,7 +338,6 @@
 
     const refreshTimelineUI = () => {
       const { total } = computeTimeline(state.segments);
-      const activeBookmarkTime = resolveBookmarkTime(state.bookmarks, state.activeBookmarkId);
       totalTimeEl.textContent = formatTime(total);
       timelineSlider.max = String(total || 0);
       timelineSlider.value = String(clamp(state.currentTime || 0, 0, total || 0));
@@ -366,20 +360,11 @@
         timelineList.appendChild(item);
       });
       captureBtn.disabled = !state.segments.length;
-      replaceInput.disabled = !state.segments.length || activeBookmarkTime === null;
       exportBtn.disabled = !state.segments.length || state.recording;
       if (clearBookmarks) clearBookmarks.disabled = !state.bookmarks.length;
     };
 
-    const updateCutReadout = () => {
-      const activeBookmarkTime = resolveBookmarkTime(state.bookmarks, state.activeBookmarkId);
-      if (activeBookmarkTime === null) {
-        cutTimeEl.textContent = '—';
-      } else {
-        cutTimeEl.textContent = formatTime(activeBookmarkTime);
-      }
-    };
-
+    // Bookmark list cards own upload + download actions (no separate cut selector).
     const renderBookmarks = () => {
       if (!bookmarkList) return;
       bookmarkList.innerHTML = '';
@@ -389,7 +374,7 @@
       }
       state.bookmarks.forEach(entry => {
         const item = document.createElement('div');
-        item.className = `bookmark-item${entry.id === state.activeBookmarkId ? ' active' : ''}`;
+        item.className = 'bookmark-item';
         const thumb = entry.image ? `<img class="bookmark-thumb" src="${entry.image}" alt="Bookmark frame">` : '<div class="bookmark-thumb"></div>';
         item.innerHTML = `
           ${thumb}
@@ -398,7 +383,11 @@
             <div><strong>Frame:</strong> ${entry.frame}</div>
           </div>
           <div class="bookmark-actions">
-            <button class="bookmark-button" data-action="select" data-bookmark-id="${entry.id}">Use</button>
+            <label class="bookmark-button bookmark-upload">
+              Upload replacement
+              <input class="bookmark-upload-input" type="file" accept="video/*" data-bookmark-id="${entry.id}">
+            </label>
+            <button class="bookmark-button" data-action="download" data-bookmark-id="${entry.id}">Download frame</button>
             <button class="bookmark-button" data-action="remove" data-bookmark-id="${entry.id}">Remove</button>
           </div>
         `;
@@ -415,6 +404,7 @@
       currentTimeEl.textContent = formatTime(clamped);
     };
 
+    // Capture a bookmark frame; preview and downloads live in the bookmark list.
     const captureFrame = () => {
       if (!state.segments.length) return;
       const width = previewVideo.videoWidth || 0;
@@ -424,30 +414,20 @@
       frameCanvas.height = height;
       const ctx = frameCanvas.getContext('2d');
       if (!ctx) return;
+      // Hidden canvas snapshot keeps capture lightweight without a separate preview panel.
       ctx.drawImage(previewVideo, 0, 0, width, height);
       const dataUrl = frameCanvas.toDataURL('image/png');
-      framePreview.src = dataUrl;
-      downloadFrame.disabled = false;
       const bookmark = createBookmark(state.currentTime, state.fps, dataUrl);
       const nextBookmarks = state.bookmarks.concat(bookmark);
-      updateState({ bookmarks: nextBookmarks, activeBookmarkId: bookmark.id });
+      updateState({ bookmarks: nextBookmarks });
       renderBookmarks();
-      updateCutReadout();
       refreshTimelineUI();
-    };
-
-    const downloadCapturedFrame = () => {
-      if (!framePreview.src) return;
-      const link = document.createElement('a');
-      link.href = framePreview.src;
-      link.download = 'frame.png';
-      link.click();
     };
 
     const handleBaseVideo = async file => {
       if (!file) return;
       revokeSegmentUrls(state.segments);
-      updateState({ bookmarks: [], activeBookmarkId: null });
+      updateState({ bookmarks: [] });
       const meta = await loadVideoMetadata(file);
       const segment = createSegmentFromFile(file, meta || {});
       updateState({
@@ -459,12 +439,11 @@
       controller.setSegments(state.segments);
       await loadSegmentIntoVideo(previewVideo, segment, 0, false);
       refreshTimelineUI();
-      updateCutReadout();
       renderBookmarks();
     };
 
-    const handleReplacementVideo = async file => {
-      const cutTime = resolveBookmarkTime(state.bookmarks, state.activeBookmarkId);
+    const handleReplacementVideo = async (file, bookmarkId) => {
+      const cutTime = resolveBookmarkTime(state.bookmarks, bookmarkId);
       if (!file || cutTime === null) return;
       const meta = await loadVideoMetadata(file);
       const segment = createSegmentFromFile(file, meta || {});
@@ -475,13 +454,11 @@
         segments: nextSegments,
         activeIndex: 0,
         currentTime: cutTime || 0,
-        bookmarks: [],
-        activeBookmarkId: null
+        bookmarks: []
       });
       controller.setSegments(state.segments);
       await controller.seek(state.currentTime);
       refreshTimelineUI();
-      updateCutReadout();
       renderBookmarks();
     };
 
@@ -544,12 +521,6 @@
       baseInput.value = '';
     });
 
-    replaceInput.addEventListener('change', event => {
-      const file = event.target.files && event.target.files[0];
-      handleReplacementVideo(file);
-      replaceInput.value = '';
-    });
-
     fpsInput.addEventListener('input', () => {
       const nextFps = normalizeFps(fpsInput.value);
       updateState({ fps: nextFps });
@@ -577,7 +548,6 @@
     });
 
     captureBtn.addEventListener('click', captureFrame);
-    downloadFrame.addEventListener('click', downloadCapturedFrame);
 
     if (bookmarkList) {
       bookmarkList.addEventListener('click', event => {
@@ -587,25 +557,38 @@
         if (!id) return;
         if (action.dataset.action === 'remove') {
           const filtered = state.bookmarks.filter(entry => entry.id !== id);
-          const activeBookmarkId = state.activeBookmarkId === id ? null : state.activeBookmarkId;
-          updateState({ bookmarks: filtered, activeBookmarkId });
+          updateState({ bookmarks: filtered });
           renderBookmarks();
-          updateCutReadout();
           refreshTimelineUI();
           return;
         }
-        updateState({ activeBookmarkId: id });
-        renderBookmarks();
-        updateCutReadout();
-        refreshTimelineUI();
+        if (action.dataset.action === 'download') {
+          const entry = state.bookmarks.find(item => item.id === id);
+          if (entry && entry.image) {
+            const link = document.createElement('a');
+            link.href = entry.image;
+            link.download = `bookmark-${entry.frame || 0}.png`;
+            link.click();
+          }
+        }
+      });
+
+      bookmarkList.addEventListener('change', event => {
+        const input = event.target.closest('.bookmark-upload-input');
+        if (!input) return;
+        const file = input.files && input.files[0];
+        const id = input.dataset.bookmarkId;
+        if (file && id) {
+          handleReplacementVideo(file, id);
+        }
+        input.value = '';
       });
     }
 
     if (clearBookmarks) {
       clearBookmarks.addEventListener('click', () => {
-        updateState({ bookmarks: [], activeBookmarkId: null });
+        updateState({ bookmarks: [] });
         renderBookmarks();
-        updateCutReadout();
         refreshTimelineUI();
       });
     }
@@ -613,7 +596,6 @@
     exportBtn.addEventListener('click', exportProject);
 
     refreshTimelineUI();
-    updateCutReadout();
     renderBookmarks();
   }
 

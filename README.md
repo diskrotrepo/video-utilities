@@ -22,7 +22,7 @@ A collection of focused utilities for generative video workflows (conversion, se
 1. Open `src/index.html` in a modern browser.
 2. Load a base video.
 3. Scrub to the frame you want and click **Capture Bookmark** (this stores a cut point).
-4. Select the bookmark you want to splice to, then upload the next clip to replace the tail.
+4. Use the **Upload replacement** button on the bookmark you want to splice to.
 5. Repeat steps 3–4 as needed, then export the stitched result.
 
 ## Testing
@@ -65,8 +65,8 @@ This is the behavioral contract for the repo. Every behavior change must:
 9. **Bookmark creation** — `bookmark_create`  
    Capturing a frame stores a bookmark with time + frame index and a preview image.
 
-10. **Bookmark selection** — `bookmark_resolve`  
-   The selected bookmark resolves to a concrete cut time for splicing.
+10. **Bookmark resolve** — `bookmark_resolve`  
+   Bookmark lookups resolve to a concrete cut time for splicing uploads.
 
 ## Conventions
 
