@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generative Video Utilities</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="title-block">
+        <h1>Generative Video Utilities</h1>
+        <p class="subtitle">Frame picker + splice timeline for iterative video extensions.</p>
+      </div>
+      <div class="status-block">
+        <div class="status-label">Project Status</div>
+        <div id="project-status" class="status-value">No video loaded.</div>
+      </div>
+    </header>
+
+    <main class="app-body">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>1) Base Video</h2>
+        </div>
+        <div class="panel-body">
+          <label class="file-input">
+            <span>Select base video</span>
+            <input id="base-video-input" type="file" accept="video/*">
+          </label>
+          <div class="meta-row">
+            <div><strong>Duration:</strong> <span id="base-duration">—</span></div>
+            <div><strong>FPS (assumed):</strong> <span id="fps-display">30</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>2) Preview + Frame Selection</h2>
+        </div>
+        <div class="panel-body">
+          <div class="preview-grid">
+            <div class="video-card">
+              <video id="preview-video" class="preview-video" controls playsinline></video>
+              <div class="scrub-row">
+                <input id="timeline-slider" type="range" min="0" max="0" step="0.001" value="0">
+                <div class="scrub-time">
+                  <span id="current-time">0.000s</span>
+                  <span>/</span>
+                  <span id="total-time">0.000s</span>
+                </div>
+              </div>
+            </div>
+            <div class="frame-card">
+              <canvas id="frame-canvas" class="frame-canvas"></canvas>
+              <img id="frame-preview" class="frame-preview" alt="Captured frame preview">
+              <button id="download-frame" class="ghost-button" type="button" disabled>Download Frame</button>
+            </div>
+          </div>
+
+          <div class="control-grid">
+            <label>
+              Assumed FPS
+              <input id="fps-input" type="number" min="1" step="1" value="30">
+            </label>
+            <label>
+              Frame #
+              <input id="frame-input" type="number" min="0" step="1" value="0">
+            </label>
+            <label>
+              Time (seconds)
+              <input id="time-input" type="number" min="0" step="0.001" value="0">
+            </label>
+          </div>
+
+          <div class="button-row">
+            <button id="capture-frame" class="primary-button" type="button" disabled>Capture Bookmark</button>
+            <div class="cut-readout">Selected bookmark: <span id="cut-time">—</span></div>
+          </div>
+
+          <div class="bookmark-panel">
+            <div class="bookmark-header">
+              <strong>Bookmarks</strong>
+              <button id="clear-bookmarks" class="ghost-button" type="button" disabled>Clear</button>
+            </div>
+            <div id="bookmark-list" class="bookmark-list">No bookmarks yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>3) Replacement Clip</h2>
+        </div>
+        <div class="panel-body">
+          <p class="hint">Upload the next clip that starts at the selected frame. It will replace everything after the cut.</p>
+          <label class="file-input">
+            <span>Select replacement clip</span>
+            <input id="replace-video-input" type="file" accept="video/*" disabled>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Timeline</h2>
+        </div>
+        <div class="panel-body">
+          <div id="timeline-list" class="timeline-list"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Export</h2>
+        </div>
+        <div class="panel-body">
+          <div class="export-row">
+            <label>
+              Export format
+              <select id="export-format">
+                <option value="video/webm;codecs=vp9">WebM (VP9)</option>
+                <option value="video/webm;codecs=vp8">WebM (VP8)</option>
+                <option value="video/webm">WebM</option>
+              </select>
+            </label>
+            <button id="export-button" class="primary-button" type="button" disabled>Export Project</button>
+          </div>
+          <div id="export-status" class="hint">No export yet.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

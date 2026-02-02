@@ -1,0 +1,75 @@
+{
+  "cases": [
+    {
+      "id": "frame_time_mapping",
+      "time": 3,
+      "frame": 90
+    },
+    {
+      "id": "splice_replaces_tail",
+      "segments": [
+        {
+          "id": "base",
+          "out": 4
+        },
+        {
+          "id": "new",
+          "out": 6
+        }
+      ]
+    },
+    {
+      "id": "splice_at_start",
+      "segments": [
+        {
+          "id": "new",
+          "out": 2
+        }
+      ]
+    },
+    {
+      "id": "splice_at_end_appends",
+      "segments": [
+        {
+          "id": "base",
+          "out": 5
+        },
+        {
+          "id": "new",
+          "out": 2
+        }
+      ]
+    },
+    {
+      "id": "find_segment_at_time",
+      "index": 1,
+      "localTime": 1,
+      "offset": 4
+    },
+    {
+      "id": "timeline_duration",
+      "total": 9
+    },
+    {
+      "id": "export_settings",
+      "mimeType": "video/webm;codecs=vp9",
+      "baseType": "video/webm",
+      "extension": "webm"
+    },
+    {
+      "id": "recording_settings",
+      "muted": false,
+      "volume": 0
+    },
+    {
+      "id": "bookmark_create",
+      "time": 2.5,
+      "frame": 50,
+      "image": "data:image/png;base64,abc"
+    },
+    {
+      "id": "bookmark_resolve",
+      "time": 3.4
+    }
+  ]
+}

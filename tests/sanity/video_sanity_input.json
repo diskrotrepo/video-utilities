@@ -1,0 +1,135 @@
+{
+  "cases": [
+    {
+      "id": "frame_time_mapping",
+      "type": "frame_time",
+      "frame": 90,
+      "fps": 30
+    },
+    {
+      "id": "splice_replaces_tail",
+      "type": "splice",
+      "cutTime": 4,
+      "segments": [
+        {
+          "id": "base",
+          "duration": 10,
+          "in": 0,
+          "out": 10
+        }
+      ],
+      "newSegment": {
+        "id": "new",
+        "duration": 6,
+        "in": 0,
+        "out": 6
+      }
+    },
+    {
+      "id": "splice_at_start",
+      "type": "splice",
+      "cutTime": 0,
+      "segments": [
+        {
+          "id": "base",
+          "duration": 8,
+          "in": 0,
+          "out": 8
+        }
+      ],
+      "newSegment": {
+        "id": "new",
+        "duration": 2,
+        "in": 0,
+        "out": 2
+      }
+    },
+    {
+      "id": "splice_at_end_appends",
+      "type": "splice",
+      "cutTime": 5,
+      "segments": [
+        {
+          "id": "base",
+          "duration": 5,
+          "in": 0,
+          "out": 5
+        }
+      ],
+      "newSegment": {
+        "id": "new",
+        "duration": 2,
+        "in": 0,
+        "out": 2
+      }
+    },
+    {
+      "id": "find_segment_at_time",
+      "type": "find_segment",
+      "time": 5,
+      "segments": [
+        {
+          "id": "a",
+          "duration": 4,
+          "in": 0,
+          "out": 4
+        },
+        {
+          "id": "b",
+          "duration": 3,
+          "in": 0,
+          "out": 3
+        }
+      ]
+    },
+    {
+      "id": "timeline_duration",
+      "type": "timeline",
+      "segments": [
+        {
+          "id": "trimmed",
+          "duration": 10,
+          "in": 2,
+          "out": 7
+        },
+        {
+          "id": "full",
+          "duration": 4,
+          "in": 0,
+          "out": 4
+        }
+      ]
+    },
+    {
+      "id": "export_settings",
+      "type": "export_settings",
+      "format": "video/webm;codecs=vp9"
+    },
+    {
+      "id": "recording_settings",
+      "type": "recording_settings"
+    },
+    {
+      "id": "bookmark_create",
+      "type": "bookmark_create",
+      "time": 2.5,
+      "fps": 20,
+      "image": "data:image/png;base64,abc"
+    },
+    {
+      "id": "bookmark_resolve",
+      "type": "bookmark_resolve",
+      "bookmarks": [
+        {
+          "id": "a",
+          "time": 1.2
+        },
+        {
+          "id": "b",
+          "time": 3.4
+        }
+      ],
+      "bookmarkId": "b"
+    }
+  ]
+}

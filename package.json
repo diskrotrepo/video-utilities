@@ -1,0 +1,9 @@
+{
+  "name": "generative-video-utilities",
+  "version": "0.1.0",
+  "description": "Utility-first tools for generative video workflows.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test"
+  }
+}
