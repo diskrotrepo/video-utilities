@@ -32,6 +32,10 @@ Run the test suite with:
 npm test
 ```
 
+## Deployment (GitHub Pages)
+
+The app is deployed to GitHub Pages on every push to `main` via the [Deploy to GitHub Pages](.github/workflows/deploy-pages.yml) workflow. One-time setup: in the repo **Settings → Pages**, set **Source** to **GitHub Actions**. The workflow serves the contents of `src/` as the site root.
+
 ## Heuristic Rule Index
 
 This is the behavioral contract for the repo. Every behavior change must:
